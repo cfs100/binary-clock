@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            * {
+                transition: 250ms;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+            }
+
+            body {
+                display: flex;
+                margin: 0;
+                padding: 0;
+                justify-content: center;
+                align-items: center;
+                background-color: black;
+                font-family: '-apple-system';
+                text-transform: uppercase;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            hour, minute, second {
+                display: block;
+                margin-right: 1vw;
+                float: left;
+            }
+
+            digit {
+                display: block;
+                float: left;
+                width: 8vw;
+                margin: 0 1vw 1vw 0;
+            }
+
+            circle {
+                display: block;
+                width: 8vw;
+                height: 8vw;
+                margin: 1vw 0;
+                border-radius: 8vw;
+                opacity: .2;
+                background: red;
+            }
+
+            circle.off {
+                opacity: 0;
+            }
+
+            circle.on {
+                opacity: 1;
+            }
+
+            text {
+                display: block;
+                font-size: 4vw;
+                color: #fff;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <clock>
+            <hour>
+                <digit>
+                    <circle class="off"></circle>
+                    <circle class="off"></circle>
+                    <circle></circle>
+                    <circle></circle>
+                </digit>
+                <digit>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                </digit>
+                <text></text>
+            </hour>
+            <minute>
+                <digit>
+                    <circle class="off"></circle>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                </digit>
+                <digit>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                </digit>
+                <text></text>
+            </minute>
+            <second>
+                <digit>
+                    <circle class="off"></circle>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                </digit>
+                <digit>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                    <circle></circle>
+                </digit>
+                <text></text>
+            </second>
+        </clock>
+        <script>
+            function setClock(type, value) {
+                var split = ('00' + value).substr(-2).split('');
+                var digits = document.querySelectorAll(type + ' digit');
+                var text = document.querySelector(type + ' text');
+
+                text.innerHTML = split.join('');
+
+                for (digit in split) {
+                    var binary1 = (split[digit] >>> 0).toString(2).split('');
+                    var circles = digits[digit].querySelectorAll('circle:not(.off)');
+                    var binary2 = [];
+
+                    for (var i = 0; i < (circles.length - binary1.length); i++) {
+                        binary2[binary2.length] = '0';
+                    }
+
+                    for (var i in binary1) {
+                        binary2[binary2.length] = binary1[i];
+                    }
+
+                    i = 0;
+                    for (var circle in circles) {
+                        while (circles[i] && circles[i].classList == 'off') {
+                            i++;
+                        }
+
+                        if (circle.length != 1 || !circles[i]) {
+                            continue;
+                        }
+
+                        circles[i].classList = binary2[circle] == '1' ? 'on' : '';
+                        i++;
+                    }
+                }
+            }
+
+            function updateClock() {
+                var date = new Date();
+
+                setClock('hour', date.getHours());
+                setClock('minute', date.getMinutes());
+                setClock('second', date.getSeconds());
+            }
+
+            setInterval(updateClock, 1000);
+            updateClock();    
+        </script>
+    </body>
+</html>
